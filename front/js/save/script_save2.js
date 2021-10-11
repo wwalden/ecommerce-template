@@ -1,15 +1,11 @@
 
-window.addEventListener("load", function structure() {
+window.onload = function displayProducts() {
   fetch("http://localhost:3000/api/products")
-
-// Requesting API
   .then(function(res) {
     if (res.ok) {
       return res.json();
     }
   })
-
-// Knowing the number of items to display and creating the HTML structure
   .then(function(value) {
     localStorage.setItem("num", JSON.stringify(Object.keys(value).length))
   })
@@ -20,18 +16,16 @@ window.addEventListener("load", function structure() {
       let newArt = document.createElement("article");
       document.getElementById("items").appendChild(newbloc);
       newbloc.setAttribute("id","bloc" + i);
-      newbloc.setAttribute("class","bloc");
       document.getElementById("bloc" + i).appendChild(newArt);
       }
   })
   .catch(function(err) {
       alert("error")
   });
-}, false);
+}
 
 
-// Inserting NAME, DESCRIPTION, IMAGE (...) for each element
-window.addEventListener("load", function displayProducts() {
+function displayProducts() {
   fetch("http://localhost:3000/api/products")
   .then(function(res) {
     if (res.ok) {
@@ -40,24 +34,23 @@ window.addEventListener("load", function displayProducts() {
   })
   .then(function(value) {
     for (i=1;i<=8;i++) {
-    let source = JSON.stringify(value[i-1].imageUrl)
-    let alt = JSON.stringify(value[i-1].altTxt)
+    let source = `<img src:http://localhost:3000/images/kanap0${i}.jpeg>`
+    //<img src:http:="" localhost:3000="" images="" kanap01.jpeg="">
     document
         .querySelector("#bloc" + i +" article")
-        .innerHTML = "<img src=" + source + " alt=" + alt + "><h3 class=\"productName\">" + value[(i-1)].name + "</h3><p class=\"productDescription\">" + value[(i-1)].description +"</p>"
+//          .innerText = JSON.stringify(value);
+        .innerHTML = source + "<h3>" + value[(i-1)].name + "</h3><p>" + value[(i-1)].description +"</p>"
+       // .querySelector("#bloc1 article p")
+       // .innerText = value[0].description
     }
   })
   .catch(function(err) {
-    alert("error")
+    // Une erreur est survenue
   });
-}, false);
+}
 
 
-let url= "./product.html"
-
+  
 document
-  .getElementsByClassName("bloc")
-  .addEventListener("click", function productPage(url) {
-    window.open(url, '_blank').focus;
-
-})
+.getElementById("testpourAPI")
+.addEventListener("click", displayProducts);

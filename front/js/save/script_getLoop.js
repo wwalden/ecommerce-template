@@ -20,15 +20,24 @@ window.onload = function displayProducts() {
       }
     })
     .then(function(value) {
+      localStorage.setItem("num", JSON.stringify(Object.keys(value).length))
+    })
+/*
+    .then(function(value) {
       document
-          .getElementById("productName")
+          .getElementById("items")
 //          .innerText = JSON.stringify(value);
           .innerText = Object.keys(value).length;
     })
+*/
     .catch(function(err) {
       // Une erreur est survenue
     });
   }
+
+  let myVar = parseInt(localStorage.getItem("num"), 10);
+  //myVar = parseInt(myVar, 10);
+  alert(typeof myVar);
 
 
 
