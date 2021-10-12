@@ -14,7 +14,6 @@ window.addEventListener("load", function structure() {
     localStorage.setItem("num", JSON.stringify(Object.keys(value).length))
   })
   .then(function() {
-// I need this variable for global scope (outside the function too), const better?    
       let myVar = parseInt(localStorage.getItem("num"), 10);
       for (i=1;i<=myVar;i++) {
       let newbloc = document.createElement("a");
@@ -22,7 +21,6 @@ window.addEventListener("load", function structure() {
       document.getElementById("items").appendChild(newbloc);
       newbloc.setAttribute("id","bloc" + i);
       newbloc.setAttribute("class","bloc");
-      //newbloc.setAttribute("href","./product.html?id=" + i * 6);
       document.getElementById("bloc" + i).appendChild(newArt);
       }
   })
@@ -41,20 +39,25 @@ window.addEventListener("load", function displayProducts() {
     }
   })
   .then(function(value) {
-    let myVar = parseInt(localStorage.getItem("num"), 10);
-    for (i=1;i<=myVar;i++) {
-    let source = JSON.stringify(value[i-1].imageUrl);
-    let alt = JSON.stringify(value[i-1].altTxt);
-    let docID = JSON.stringify(value[i-1]._id);
+    for (i=1;i<=8;i++) {
+    let source = JSON.stringify(value[i-1].imageUrl)
+    let alt = JSON.stringify(value[i-1].altTxt)
     document
         .querySelector("#bloc" + i +" article")
         .innerHTML = "<img src=" + source + " alt=" + alt + "><h3 class=\"productName\">" + value[(i-1)].name + "</h3><p class=\"productDescription\">" + value[(i-1)].description +"</p>"
-    document.getElementById("bloc" + i).setAttribute("href","./product.html?id=" + docID);
-
-
     }
   })
   .catch(function(err) {
     alert("error")
   });
 }, false);
+
+
+let url= "./product.html"
+
+document
+  .getElementsByClassName("bloc")
+  .addEventListener("click", function productPage(url) {
+    window.open(url, '_blank').focus;
+
+})

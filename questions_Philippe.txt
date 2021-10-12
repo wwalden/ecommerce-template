@@ -1,0 +1,14 @@
+- PROJET P5:
+        - why lien vers script JS dans les HTML sont tout à la fin du fichier ?
+        - why parfois le JSON m'envoie les data entre guillemets et parfois non ?
+
+- questions concernant les Object construtors (then), voir screenshots Sololearn
+
+- projet perso: créer un site web vitrine pour une agence de production de films
+        - Wordpress?
+        - rendu du type: https://www.farnorthproductions.com
+        - estimé du temps passé
+
+- suite formation:
+        - Alternance OCR Python? https://openclassrooms.com/fr/paths/518-developpeur-dapplication-python
+        - en alternance, durée de 2 ans pas trop long? 
