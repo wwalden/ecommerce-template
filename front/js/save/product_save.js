@@ -55,7 +55,7 @@ window.addEventListener("load", function prodPage() {
     });
   }, false);
 
-/*
+
 
 // ADDING ELEMENTS TO CART
 
@@ -96,4 +96,3 @@ cartAdd.addEventListener("click", function() {
   }
 })
 
-*/

@@ -55,45 +55,114 @@ window.addEventListener("load", function prodPage() {
     });
   }, false);
 
-/*
 
-// ADDING ELEMENTS TO CART
-
-// Getting values of the current page
-let cartAdd = document.getElementById("addToCart");
+// Adding elements in the cart
+const cartAdd = document.getElementById("addToCart");
 cartAdd.addEventListener("click", function() {
   let currentPage = window.location.href;
   let pageUrl = new URL(currentPage);
   let prodId = pageUrl.searchParams.get("id");
   let cartId = prodId.replace(/['"]+/g, '');
-  let cartQty = document.getElementById("quantity").value;
-  let cartCol = document.getElementById("colors").value;
+  const cartQty = document.getElementById("quantity").value;
+  const cartCol = document.getElementById("colors").value;
+  //return alert("Produit: " + cartId + ", Quantité: " + cartQty + ", Couleur: " + cartCol)
+  let cartData = new Array (cartId, cartQty, cartCol);
+  return alert(cartData);
 
-// Knowing if there is already something in cart. If not:
-  if (localStorage.getItem("obj") === null) {
-    localStorage.setItem("obj", "{\"id\": " + cartId + ",\"qty\":" + cartQty + ",\"color\": " + cartCol + ",}");
-// If yes:
-  } else {
-    let objLinea = localStorage.getItem("obj");
-    let objJson = JSON.parse(objLinea);
-    let count = Object.keys(objJson).length;
-//checking if there is already the same reference in cart, in this case we need to add Qty
-    for (i=1;i<=count;i++) {
-      let idTest = objJson[i-1].id; // scope du let? only dans le for?
-      let colTest = objJson[i-1].color;
-      if(cartId == idTest) {
-        if(cartCol == colTest) {
-          objJson[i-1].qty += 1;
-          break;
-        }
-      }
-      if (i==count) {
-        objJson.push({"id": cartId,"qty": cartQty,"color": cartCol,});
-      }
-    }
-  let objLinea = JSON.stringify(objJson);
-  localStorage.setItem("obj",objLinea);  // assez pour remplacer? ou je dois clear puis set again?
-  }
 })
 
+
+if (localStorage.getItem("obj") === null) {
+  localStorage.setItem("obj", "{\"id\": " + cartId + ",\"qty\":" + cartQty + ",\"color\": " + cartCol + ",}");
+} else {
+
+}
+
+
+
+/*
+let objJson = 
+[
+  {
+    "id": "876546",
+    "qty": 2,
+    "color": "red",
+  },
+  {
+    "id": "9999999",
+    "qty": 1,
+    "color": "black",
+  }
+]
+
+
+
+
+// pour stocker
+let objLinea = JSON.stringify(objJson);
+localStorage.setItem("obj",objLinea);
 */
+
+// pour le lire
+let objLinea = localStorage.getItem("obj");
+let objJson = JSON.parse(objLinea);
+//objJson.push({"id": "00200200","qty": 4,"color": "yellow",});
+let count = Object.keys(objJson).length;
+//objJson[0].id; renvoie l'élément ID
+
+//alert(count);  // ok fonctionne
+
+
+for (i=1;i<=count;i++) {
+  let idTest = objJson[i-1].id;
+  let colTest = objJson[i-1].color;
+  if(cartId == idTest) {
+    if(cartCol == colTest) {
+      objJson[i-1].qty += 1;
+      break;
+      // ajouter uniquement la quantité
+      // break le for (mais comment éviter le push derrière?)
+    }
+  }
+  if (i==count) {
+    objJson.push({"id": cartId,"qty": cartQty,"color": cartCol,});
+  }
+}
+
+
+let objLinea = JSON.stringify(objJson);
+localStorage.setItem("obj",objLinea);
+// assez pour remplacer? ou je dois clear puis set again?
+
+
+//localStorage.clear();
+
+//alert(localStorage.length);
+//alert(localStorage.key(0));
+/*
+[
+  {
+    "id": "876546",
+    "qty": 2,
+    "color": "red",
+  },
+  {
+    "id": "9999999",
+    "qty": 1,
+    "color": "black",
+  }
+]
+*/
+
+//localStorage.getItem
+//alert(localStorage.obj);
+//alert(localStorage.key(0));
+//alert(localStorage.key(1));
+//alert(localStorage.key(2));
+//alert(localStorage.key(3));
+
+//alert(localStorage.id)
+
+
+
+
