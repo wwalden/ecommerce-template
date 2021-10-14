@@ -1,99 +1,88 @@
 
-// Requesting API, accessing only the selected product data
-window.addEventListener("load", function prodPage() {
+// Récupérer l'ID du produit sélectionné et requêter l'API uniquement pour ce dernier
   let currentPage = window.location.href;
   let pageUrl = new URL(currentPage);
   let prodId = pageUrl.searchParams.get("id");
-  let prodIdOk = prodId.replace(/['"]+/g, '');
-  fetch("http://localhost:3000/api/products/" + prodIdOk)
+  fetch("http://localhost:3000/api/products/" + prodId)
     .then(function(res) {
       if (res.ok) {
         return res.json();
       }
-    })
+  })
 
-    
-// Retrieving selected product data in variable, then inserting it in HTML structure
+// Récupérer les données du canapé choisi, les stocker dans des variables
     .then(function(value) {
-      let prodName = JSON.stringify(value.name); 
-      let prodNameOk = prodName.replace(/['"]+/g, '');
-      let prodPrice = JSON.stringify(value.price);
-      let prodDesc = JSON.stringify(value.description).replace(/['"]+/g, '');
-      let prodImg = JSON.stringify(value.imageUrl).replace(/['"]+/g, '');
-      let prodAlt = JSON.stringify(value.altTxt);
-      let prodColors = JSON.stringify(value.colors);
-      let prodArr = JSON.parse(prodColors);
-      let ArrLength = prodArr.length; 
+      let prodName = value.name;
+      let prodPrice = value.price;
+      let prodDesc = value.description;
+      let prodImg = value.imageUrl;
+      let prodAlt = value.altTxt;
+      let prodColors = value.colors;
+      let ArrLength = prodColors.length;
 
+// Insérer les données dans la structure HTML de la page
       document
         .getElementById("title")
-        .innerHTML = prodNameOk;
-
+        .innerHTML = prodName;
       document
         .getElementById("price")
         .innerHTML = prodPrice;
-
       document
         .getElementById("description")
         .innerText = prodDesc;
-
       document
         .getElementById("prod_image")
-        .innerHTML = "<img src=" + prodImg + " alt=" + prodAlt + ">";
+        .innerHTML = `<img src=${prodImg} alt="${prodAlt}">`;
 
-
-// For loop in order to have the correct amount of color options
+// For loop pour déterminer la quantité d'options couleur, puis les afficher
       for (i=0;i<=ArrLength-1;i++) {
         let newOpt = document.createElement("option");
         document.getElementById("colors").appendChild(newOpt);
-        newOpt.setAttribute("value",prodArr[i]);
-        newOpt.innerHTML = prodArr[i];
+        newOpt.setAttribute("value",prodColors[i]);
+        newOpt.innerHTML = prodColors[i];
       }
     })
-    .catch(function() {
-      alert("error")
-    });
-  }, false);
 
-/*
 
-// ADDING ELEMENTS TO CART
-
-// Getting values of the current page
-let cartAdd = document.getElementById("addToCart");
-cartAdd.addEventListener("click", function() {
-  let currentPage = window.location.href;
-  let pageUrl = new URL(currentPage);
-  let prodId = pageUrl.searchParams.get("id");
-  let cartId = prodId.replace(/['"]+/g, '');
-  let cartQty = document.getElementById("quantity").value;
+// Ajouter la sélection au panier
+function cartFunc() {
+  // Récupérer les informations de couleur et de quantité
+  let cartQty = parseInt(document.getElementById("quantity").value);
   let cartCol = document.getElementById("colors").value;
 
-// Knowing if there is already something in cart. If not:
-  if (localStorage.getItem("obj") === null) {
-    localStorage.setItem("obj", "{\"id\": " + cartId + ",\"qty\":" + cartQty + ",\"color\": " + cartCol + ",}");
-// If yes:
+  // Si le panier est vide, créer le panier avec les informations de ID / couleur / qté sélectionnées
+  // Sous la forme: {id: {couleur: quantité}}
+  // Stocker ces informations dans le localStorage sous forme de string, avec la clé "carty"
+  if (localStorage.getItem("carty") === null) {
+    let myJson = {[prodId]: {[cartCol]: cartQty}};
+    let myData = JSON.stringify(myJson);
+    localStorage.setItem("carty", myData);
+  // Si un panier existe déjà, le récupérer
   } else {
-    let objLinea = localStorage.getItem("obj");
-    let objJson = JSON.parse(objLinea);
-    let count = Object.keys(objJson).length;
-//checking if there is already the same reference in cart, in this case we need to add Qty
-    for (i=1;i<=count;i++) {
-      let idTest = objJson[i-1].id; // scope du let? only dans le for?
-      let colTest = objJson[i-1].color;
-      if(cartId == idTest) {
-        if(cartCol == colTest) {
-          objJson[i-1].qty += 1;
-          break;
-        }
+    let myData = localStorage.getItem("carty");
+    let myJson = JSON.parse(myData);
+    // Si notre produit est déjà dans le panier...
+    if (prodId in myJson) {
+      // ... avec la même couleur que celle choisie par l'utilisateur, on incrémente la quantité avec la nouvelle quantité
+      if (cartCol in myJson[prodId]) {
+        myJson[prodId][cartCol] += cartQty;
+      // ... avec une autre couleur, on ajoute l'information sous forme d'une nouvelle paire {couleur: quantité} rattachée au produit
+      } else {
+        myJson[prodId][cartCol] = cartQty;
       }
-      if (i==count) {
-        objJson.push({"id": cartId,"qty": cartQty,"color": cartCol,});
-      }
+    // Si le produit n'est pas dans le panier, on l'ajoute, sous la forme {id: {couleur: quantité}}
+    } else { 
+      myJson[prodId] = {[cartCol]: cartQty}
     }
-  let objLinea = JSON.stringify(objJson);
-  localStorage.setItem("obj",objLinea);  // assez pour remplacer? ou je dois clear puis set again?
+    // Stocker notre nouveau panier dans le localStorage
+    let myNewData = JSON.stringify(myJson);
+    localStorage.setItem("carty", myNewData);
   }
-})
+}
 
-*/
+
+
+//localStorage.clear();
+//alert(localStorage.length);
+//let myData = localStorage.getItem("carty");
+//alert(myData);
