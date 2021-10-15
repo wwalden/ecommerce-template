@@ -14,18 +14,16 @@ fetch("http://localhost:3000/api/products")
       // ...Créer la structure HTML
       // Déclarer les variables
       let newbloc = document.createElement("a");
-      let source = value[i].imageUrl;
-      let alt = value[i].altTxt;
-      let docID = value[i]._id;
 
       // Insérer les attributs des éléments créés
       newbloc.setAttribute("id",`bloc${i}`);
       newbloc.setAttribute("class","bloc");
-      newbloc.setAttribute("href",`./product.html?id=${docID}`);
+      newbloc.setAttribute("href",`./product.html?id=${value[i]._id}`);
       document.getElementById("items").appendChild(newbloc);
       let newArt = document.createElement("article");
       document.getElementById(`bloc${i}`).appendChild(newArt);
-      newArt.innerHTML =`<img src=${source} alt="${alt}"><h3 class="productName">${value[i].name}</h3><p class="productDescription">${value[i].description}</p>`;
+      newArt.innerHTML =`<img src=${value[i].imageUrl} alt="${value[i].altTxt}"><h3 class="productName">${value[i].name}</h3>
+      <p class="productDescription">${value[i].description}</p>`;
     }
   })
 

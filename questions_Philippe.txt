@@ -1,3 +1,14 @@
+_________________________________________________________________________________________________________________
+// MERCREDI 20 OCTOBRE
+
+- PROJET P5:
+        - sur l'API, pourquoi un /ID nous donne direct accès au Produit (norme? pourquoi spécifiquement ID?)
+
+
+
+_________________________________________________________________________________________________________________
+// MERCREDI 13 OCTOBRE
+
 - PROJET P5:
         - save files befor call !!
         - pour déclarer une variable sur un scope global, on utilise "var" du coup?
@@ -20,3 +31,5 @@
 - suite formation:
         - Alternance OCR Python? https://openclassrooms.com/fr/paths/518-developpeur-dapplication-python
         - en alternance, durée de 2 ans pas trop long? 
+
+_________________________________________________________________________________________________________________

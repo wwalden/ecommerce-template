@@ -1,3 +1,4 @@
+// AFFICHER LES INFORMATIONS LIÉES AU PRODUIT SÉLECTIONNÉ, PERMETTRE L'AJOUT AU PANIER
 
 // Récupérer l'ID du produit sélectionné et requêter l'API uniquement pour ce dernier
   let currentPage = window.location.href;
@@ -45,6 +46,7 @@
 
 
 // Ajouter la sélection au panier
+// La fonction se déclenche via un 'onclick' situé directement dans le code HTML de la page produit
 function cartFunc() {
   // Récupérer les informations de couleur et de quantité
   let cartQty = parseInt(document.getElementById("quantity").value);
@@ -78,6 +80,7 @@ function cartFunc() {
     let myNewData = JSON.stringify(myJson);
     localStorage.setItem("carty", myNewData);
   }
+  alert("c'est ajouté au panier!")
 }
 
 

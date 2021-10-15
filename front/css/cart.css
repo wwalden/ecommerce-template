@@ -36,12 +36,13 @@ h2 {
     justify-content: space-between;
 }
 .cart__item__content__titlePrice {
-	display: flex;
+	/*display: flex;*/
 	justify-content: space-between;
 }
 .cart__item__content__titlePrice h2,
 .cart__item__content__titlePrice p {
 	margin: 0;
+	padding-bottom: 8px;
 }
 .cart__item__content__settings p {
 	margin: 0;
