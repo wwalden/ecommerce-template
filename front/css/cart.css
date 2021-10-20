@@ -15,6 +15,31 @@ h2 {
 /************/
 /*Cart Items*/
 /************/
+
+/* My changes (Arnaud) */
+
+#cartTitle {
+	position: relative;
+}
+
+::placeholder {
+	opacity: 0.5;
+}
+
+input {
+	padding-left: 10px;
+}
+
+/* End of my changes... */
+
+
+#emptyCart {
+	position: absolute;
+	top: -40px;
+	right: 0px;
+}
+
+
 .cart__item {
     display: flex;
     justify-content: space-around;

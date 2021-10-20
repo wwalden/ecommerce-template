@@ -3,6 +3,17 @@ ________________________________________________________________________________
 
 - PROJET P5:
         - sur l'API, pourquoi un /ID nous donne direct accès au Produit (norme? pourquoi spécifiquement ID?)
+        - Alert de confimation. Comment les mettre après le refresh?
+        - addEventListener == Good practice ? (https://www.javascripttutorial.net/javascript-dom/javascript-change-event/)
+        - Formater les nombres avec séparateur?
+
+
+
+
+
+
+
+
 
 
 

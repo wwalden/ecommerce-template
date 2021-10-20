@@ -45,7 +45,12 @@
     <main class="limitedWidthBlockContainer">
       <div class="limitedWidthBlock" id="limitedWidthBlock">
         <div class="cartAndFormContainer" id="cartAndFormContainer">
-          <h1>Votre panier</h1>
+          <div id="cartTitle">
+            <h1>Votre panier</h1>
+            <div class="cart__order__form__submit">
+              <input onclick="emptyFunc()" type="submit" value="Vider mon panier" id="emptyCart">
+            </div>
+          </div>  
           <section class="cart">
             <section id="cart__items">
              <!--
@@ -79,31 +84,31 @@
               <form method="get" class="cart__order__form">
                 <div class="cart__order__form__question">
                   <label for="firstName">Prénom: </label>
-                  <input type="text" name="firstName" id="firstName" required>
+                  <input placeholder="William" class="cart__input_el" type="text" name="firstName" id="firstName" required>
                   <p id="firstNameErrorMsg"><!-- ci est un message d'erreur --></p>
                 </div>
                 <div class="cart__order__form__question">
                   <label for="lastName">Nom: </label>
-                  <input type="text" name="lastName" id="lastName" required>
+                  <input placeholder="Blake" type="text" name="lastName" id="lastName" required>
                   <p id="lastNameErrorMsg"></p>
                 </div>
                 <div class="cart__order__form__question">
                   <label for="address">Adresse: </label>
-                  <input type="text" name="address" id="address" required>
+                  <input placeholder="Nowhere Street" type="text" name="address" id="address" required>
                   <p id="addressErrorMsg"></p>
                 </div>
                 <div class="cart__order__form__question">
                   <label for="city">Ville: </label>
-                  <input type="text" name="city" id="city" required>
+                  <input placeholder="Machine city" type="text" name="city" id="city" required>
                   <p id="cityErrorMsg"></p>
                 </div>
                 <div class="cart__order__form__question">
                   <label for="email">Email: </label>
-                  <input type="email" name="email" id="email" required>
+                  <input placeholder="william.blake@icloud.com" type="email" name="email" id="email" required>
                   <p id="emailErrorMsg"></p>
                 </div>
                 <div class="cart__order__form__submit">
-                  <input type="submit" value="Commander !" id="order">
+                  <input onclick="storeCust()" type="submit" value="Commander !" id="order">
                 </div>
               </form>
             </div>
