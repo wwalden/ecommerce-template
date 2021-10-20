@@ -15,103 +15,7 @@ var basketAmount = 0
 // BLOC 1: Afficher dynamiquement les éléments du panier sur la page panier, produit par produit
 /**************************************/
 
-// Compter le nombre d'ID présents dans le panier
-let myData = localStorage.getItem("carty");
-let myJson = JSON.parse(myData);
-let count = Object.keys(myJson).length;
-
-Object.keys(myJson).forEach( (prodId) => {
-    canap = getItem( prodId, myJson );
-
-})
-updateTotal()
-
-function getItem(prodId, myJson) {
-    fetch("http://localhost:3000/api/products/" + prodId)
-    .then(function(res) {
-      if (res.ok) {
-        return res.json();
-      }
-    })
-    .then(function(value) {
-      return itereCouleur(value, prodId, myJson[prodId])
-    });
-}
-
-function itereCouleur(canap, prodId, article) {
-    Object.keys(article).forEach( (color) => {
-        if (article[color] > 0) {
-          afficheArticle(canap, prodId, color, article[color] )
-        }
-    })
-}
-
-function afficheArticle( canap, prodId, color, qty ) {
-    let newArtBox = document.createElement("article");
-    newArtBox.setAttribute("class", "cart__item");
-    document.getElementById("cart__items").appendChild(newArtBox);
-    newArtBox.innerHTML = `
-            <div class="cart__item__img">
-                <img src="${canap.imageUrl}" alt="${canap.altTxt}">
-            </div>
-            <div class="cart__item__content">
-                <div class="cart__item__content__titlePrice">
-                    <h2>${canap.name}</h2>
-                    <p>couleur: ${color}</p>
-                    <p>${canap.price}€</p>
-                    
-                </div>
-                <div class="cart__item__content__settings">
-                    <div class="cart__item__content__settings__quantity">
-                        <p>Qté :</p>
-                        <input type="number" onclick="updateQuantity('${prodId}', '${color}')" id="${prodId}|${color}" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${qty}>
-                    </div>
-                    <div class="cart__item__content__settings__delete">
-                        <p onclick="deleteItem('${prodId}', '${color}')" class="deleteItem">Supprimer</p>
-                    </div>
-                </div>
-            </div>`
-}
-
-function updateQuantity(modifId, modifCol) {
-  let qty = parseInt( document.getElementById(`${modifId}|${modifCol}`).value )
-
-  let myData = localStorage.getItem("carty");
-  let myJson = JSON.parse(myData);
-  myJson[modifId][modifCol] = qty;
-
-  // Stocker à nouveau le JSON modifié
-  let myNewData = JSON.stringify(myJson);
-  localStorage.setItem("carty", myNewData);
-
-  updateTotal()
-}
-
-function deleteItem(modifId, modifCol) {
-  let myData = localStorage.getItem("carty");
-  let myJson = JSON.parse(myData);
-  myJson[modifId][modifCol] = 0;
-
-  // Stocker à nouveau le JSON modifié
-  let myNewData = JSON.stringify(myJson);
-  localStorage.setItem("carty", myNewData);
-
-  // Envoyer un message de confirmation et reloader la page
-  alert("Élément supprimé!");
-  location.reload();
-}
-
-function updateTotal() {
-  let myData = localStorage.getItem("carty");
-  let myJson = JSON.parse(myData);
-
-  // Calculer le total
-
-}
-
-
 // Requêter l'API et s'assurer du retour des données
-/*
 fetch("http://localhost:3000/api/products")
   .then(function(res) {
     if (res.ok) {
@@ -189,7 +93,6 @@ fetch("http://localhost:3000/api/products")
         }
     }
 })
-*/
 
 /**************************************/
 //END BLOC 1
@@ -259,6 +162,20 @@ function changeFunc(inp) {
     }
     let totalQtyEl = document.getElementById("totalQuantity");
     totalQtyEl.innerHTML = myTotQty;
+
+    var myTotPrice = 0;
+    for (j=0;j<=count-1;j++) {
+        let refe = Object.values(Object.values(myJson)[i]);
+        let myIdd = Object.keys(myJson)[0];
+        let yoyo = Object.keys(Object.values(myJson)[0])[0];
+        let price = document.getElementById(yoyo + myIdd + yoyo);
+        let priceOK = price.textContent.slice(0,-1);  
+        let countByRef = refe.reduce((a, b) => a + b, 0);      
+        myTotPrice += countByRef * priceOK;                                     
+    }
+    let totalPriceEl = document.getElementById("totalPrice");
+    totalPriceEl.innerHTML = myTotPrice;
+
     
 }
 
@@ -267,7 +184,6 @@ function changeFunc(inp) {
 
 // Afficher AU CHARGEMENT DE LA PAGE les quantités totales du panier
 // Même bloc de code que juste au dessus celui qui se déclenche au clic avec la fonction "ChangeFunc"
-/*
 let myData = localStorage.getItem("carty");
 let myJson = JSON.parse(myData);
 let count = Object.keys(myJson).length;
@@ -279,7 +195,7 @@ for (i=0;i<=count-1;i++) {
 }
 let totalQtyEl = document.getElementById("totalQuantity");
 totalQtyEl.innerHTML = myTotQty;
-*/
+
 
 /**************************************/
 //END BLOC 2
