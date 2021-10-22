@@ -1,94 +1,65 @@
-/*
-Voir pour faire fonctionner le cart_test ? (avec requête de l'API par product_ID only)
-Aller chercher avec juste un ID par produit pour les modifs etc.... (<article id="[id][col]") + possibilité de récup ces variables direct
-vérifier si le plug du HTML est bien autorisé?
-puis méthode POST...
-/*
-
 
 /**************************************/
 // BLOC 1: Afficher dynamiquement les éléments du panier sur la page panier, produit par produit
 /**************************************/
 
 
-// Requêter l'API et s'assurer du retour des données
-fetch("http://localhost:3000/api/products")
-.then(function(res) {
-  if (res.ok) {
-    return res.json();
-  }
-})
-.then(function(value) {
 
-  // Compter le nombre d'ID présents dans le panier
-  let myData = localStorage.getItem("carty");
-  let myJson = JSON.parse(myData);
-  let count = Object.keys(myJson).length;
-  var basketAmount = 0;
+// Compter le nombre d'ID présents dans le panier
+let myData = localStorage.getItem("carty");
+let myJson = JSON.parse(myData);
+let count = Object.keys(myJson).length;
 
-  // Boucle qui sera effectuée pour chacun des ID du panier
-  for (k=0; k<=count-1; k++) {
-    let myId = Object.keys(myJson)[k];
-
-    // Boucle 'for' permettant de parcourir l'API à la recherche de l'ID n°[k] du panier: (ID[k] = APIelement[i])
-    for (i=0; i<value.length;i++) {
-      let docID = value[i]._id;
-
-      // Boucle 'if' pour indiquer quoi faire lorsque l'on a trouvé notre ID via l'API
-      if (docID == myId){
-
-        // Déterminer le nombre de couleurs disponibles pour l'ID, identifier chaque couleur [j]
-        // Vérifier à chaque fois si elle est présente dans le panier 
-        for (j=0; j<=value[i].colors.length;j++) {
-          let NewColor = value[i].colors[j];
-
-          // Si la couleur est dans le panier (quantité > 1), création de la structure HTML 
-          // En insérant les informations du produit / du panier
-          if (myJson[myId][NewColor] > 0) {
-              
-            // BEG ---- Pour afficher le prix total
-            let bktQty = parseInt(myJson[myId][NewColor]);
-            if (bktQty>0) {
-            basketAmount = basketAmount + bktQty * value[i].price;
-            }
-            let el = document.getElementById("totalPrice");
-            el.innerHTML = `${basketAmount}`;
-            // END ---- Pour afficher le prix total
-
-            let newArtBox = document.createElement("article");
-            newArtBox.setAttribute("class", "cart__item");
-            //newArtBox.setAttribute("id", value[i]._id + NewColor);
-            document.getElementById("cart__items").appendChild(newArtBox);
-            newArtBox.innerHTML = `
-              <div class="cart__item__img">
-                  <img src="${value[i].imageUrl}" alt="${value[i].altTxt}">
-              </div>
-              <div class="cart__item__content">
-                  <div class="cart__item__content__titlePrice">
-                      <h2>${value[i].name}</h2>
-                      <p>couleur: ${NewColor}</p>
-                      <p id="${NewColor}${value[i]._id}${NewColor}">${value[i].price}€</p>
-                      
-                  </div>
-                  <div class="cart__item__content__settings">
-                      <div class="cart__item__content__settings__quantity">
-                          <p>Qté :</p>
-                          <input type="number" onchange="changeFunc(this)" id="${NewColor}${value[i]._id}" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${myJson[myId][NewColor]}>
-                      </div>
-                      <div class="cart__item__content__settings__delete">
-                          <p onclick="deleteFunc(this)" class="deleteItem" id="${value[i]._id}${NewColor}">Supprimer</p>
-                      </div>
-                  </div>
-              </div>`
-          }         
-        }
-        // La clé 'break' permet de sortir de la boucle lorsque l'on a trouvé l'ID du panier dans le JSON via l'API
-        break
-      }
+for (i=0; i<=count-1; i++) {
+  let myId = Object.keys(myJson)[i];
+  // Requêter l'API et s'assurer du retour des données
+  fetch("http://localhost:3000/api/products/" + myId)
+  .then(function(res) {
+    if (res.ok) {
+      return res.json();
     }
-  }
-updateTotal();
-})
+  })
+  .then(function(value) {
+    // Déterminer le nombre de couleurs disponibles pour l'ID, identifier chaque couleur [j]
+    // Vérifier à chaque fois si elle est présente dans le panier 
+    for (j=0; j<=value.colors.length;j++) {
+      let NewColor = value.colors[j];
+
+      // Si la couleur est dans le panier (quantité > 1), création de la structure HTML 
+      // En insérant les informations du produit / du panier
+      if (myJson[myId][NewColor] > 0) {
+          
+        let newArtBox = document.createElement("article");
+        newArtBox.setAttribute("class", "cart__item");
+        //newArtBox.setAttribute("id", value[i]._id + NewColor);
+        document.getElementById("cart__items").appendChild(newArtBox);
+        newArtBox.innerHTML = `
+          <div class="cart__item__img">
+              <img src="${value.imageUrl}" alt="${value.altTxt}">
+          </div>
+          <div class="cart__item__content">
+              <div class="cart__item__content__titlePrice">
+                  <h2>${value.name}</h2>
+                  <p>couleur: ${NewColor}</p>
+                  <p id="${NewColor}${value._id}${NewColor}">${value.price}€</p>
+                  
+              </div>
+              <div class="cart__item__content__settings">
+                  <div class="cart__item__content__settings__quantity">
+                      <p>Qté :</p>
+                      <input type="number" onchange="changeFunc(this)" id="${NewColor}${value._id}" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${myJson[myId][NewColor]}>
+                  </div>
+                  <div class="cart__item__content__settings__delete">
+                      <p onclick="deleteFunc(this)" class="deleteItem" id="${value._id}${NewColor}">Supprimer</p>
+                  </div>
+              </div>
+          </div>`
+      }         
+    }        
+  })
+//  .then(updateTotal())
+}
+
 
 
 

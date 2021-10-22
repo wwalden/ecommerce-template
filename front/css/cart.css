@@ -30,14 +30,15 @@ input {
 	padding-left: 10px;
 }
 
-/* End of my changes... */
-
-
 #emptyCart {
 	position: absolute;
 	top: -40px;
 	right: 0px;
+	font-size: 18px;
+	padding: 12px 20px;
 }
+
+/* End of my changes... */
 
 
 .cart__item {
@@ -170,6 +171,18 @@ input {
 	.cart__item__content__titlePrice {
 		flex-direction: column;
 	}
+
+
+	h1 {
+		margin-bottom: 10px; 
+	}
+
+	#emptyCart {
+		position: relative;
+		margin-bottom: 20px;
+		font-size: 16px;
+	}
+
 }
 
 @media (max-width: 575.98px) { 

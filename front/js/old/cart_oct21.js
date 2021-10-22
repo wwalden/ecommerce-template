@@ -207,110 +207,94 @@ totalQtyEl.innerHTML = myTotQty;
 // BLOC 3: Valider les différents champs du formulaire avec des RegEx (5 blocs)
 /**************************************/
 
-// Récupérer l'ID du champ
+
+// Définir la fonction de validation Regex
+// rId: ID de l'élément à tester, rIdError: ID de l'élément qui affiche le message d'erreur, rRegex: règle à appliquer
+// La fonction sera appelée pour chacun des 5 champs du formulaire
+function regexFunc(rId, rIdError, rRegex) {
 document
-  .getElementById("firstName")
+  .getElementById(rId)
   .addEventListener("input", function(e) {
+// Réactiver le bouton d'envoi de la commande (dans le cas où il aurait été désactivé par une tentative d'envoi non valide précédemment)
+document
+.getElementById("order")
+.removeAttribute("disabled");
 // Définir les caractères autorisés
-  if (/^[A-zÀ-ÿ-_ ]+$/.test(e.target.value)) {
-    let el = document.getElementById("firstNameErrorMsg")
+  if (rRegex.test(e.target.value)) {
+    let el = document.getElementById(rIdError)
     el.innerText = "";
   } else {
       // Définir un message si le champ est laissé vide
       if(/^$/.test(e.target.value)) {
-        let el = document.getElementById("firstNameErrorMsg")
+        let el = document.getElementById(rIdError)
         el.innerText = "Doit être renseigné";
       } else {
         // Définir un message si le champ ne correspond pas au format demandé
-        let el = document.getElementById("firstNameErrorMsg")
+        let el = document.getElementById(rIdError)
         el.innerText = "Format non valide";
       }
   }
 })
+}
 
-// Récupérer l'ID du champ
-document
-  .getElementById("lastName")
-  .addEventListener("input", function(e) {
-// Définir les caractères autorisés
-  if (/^[A-zÀ-ÿ-_ ]+$/.test(e.target.value)) {
-    let el = document.getElementById("lastNameErrorMsg")
-    el.innerText = "";
-  } else {
-    // Définir un message si le champ est laissé vide
-    if(/^$/.test(e.target.value)) {
-        let el = document.getElementById("lastNameErrorMsg")
-        el.innerText = "Doit être renseigné";
-      } else {
-        // Définir un message si le champ ne correspond pas au format demandé
-        let el = document.getElementById("lastNameErrorMsg")
-        el.innerText = "Format non valide";
-      }
-  }
-})
+// Définir les différentes règles Regex
+let regex1 = /^[A-zÀ-ÿ-_ ]+$/;
+let regex2 = /^[A-zÀ-ÿ0-9-/_,. ]+$/;
+let regex3 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-// Récupérer l'ID du champ
-document
-  .getElementById("address")
-  .addEventListener("input", function(e) {
-// Définir les caractères autorisés
-  if (/^[A-zÀ-ÿ0-9-_,. ]+$/.test(e.target.value)) {
-    let el = document.getElementById("addressErrorMsg")
-    el.innerText = "";
-  } else {
-    // Définir un message si le champ est laissé vide
-    if(/^$/.test(e.target.value)) {
-        let el = document.getElementById("addressErrorMsg")
-        el.innerText = "Doit être renseigné";
-      } else {
-        // Définir un message si le champ ne correspond pas au format demandé
-        let el = document.getElementById("addressErrorMsg")
-        el.innerText = "Format non valide";
+// Stocker les différentes variables (5 champs de formulaire) pour la fonction. (dans des Arrays)
+const rId = ["firstName", "lastName", "address", "city", "email"];
+const rIdError = Array.from(rId, x => x + "ErrorMsg");
+const rRegex = [regex1, regex1, regex2, regex1, regex3];
+
+// Boucle "for" sur la fonction, afin de l'appliquer à chacun des champs de formulaire
+for (i=0;i<5;i++) {
+regexFunc(rId[i], rIdError[i], rRegex[i]);
+}
+
+
+/**************************************/
+
+// Fonction appelée au clic de commande
+// La but est de désactiver le bouton si tous les champs ne sont pas correctement renseignés
+function storeCust() {
+
+  // Définir les variables de champs qui seront testés
+  const rIdT = ["firstName", "lastName", "address", "city", "email"];
+  const rIdErrorT = Array.from(rId, x => x + "ErrorMsg");  
+
+  // Boucle qui renvoie un entier supérieur à zéro si l'un des champs est vide (== bloquant)
+  let sumTest = 0
+  for (let testOne of rIdT) {
+    let elemTest1 = document.getElementById(testOne);
+    if (elemTest1.value.length == 0) {
+      sumTest += 1;
     }
   }
-})
-
-// Récupérer l'ID du champ
-document
-  .getElementById("city")
-  .addEventListener("input", function(e) {
-// Définir les caractères autorisés
-  if (/^[A-zÀ-ÿ-_ ]+$/.test(e.target.value)) {
-    let el = document.getElementById("cityErrorMsg")
-    el.innerText = "";
-  } else {
-    // Définir un message si le champ est laissé vide
-    if(/^$/.test(e.target.value)) {
-        let el = document.getElementById("cityErrorMsg")
-        el.innerText = "Doit être renseigné";
-      } else {
-        // Définir un message si le champ ne correspond pas au format demandé
-        let el = document.getElementById("cityErrorMsg")
-        el.innerText = "Format non valide";
-      }
+  // Boucle qui renvoie un entier supérieur à zéro si l'un des champs ne respecte pas les règles Regex (== bloquant)
+  for (let testTwo of rIdErrorT) {
+    let elemTest2 = document.getElementById(testTwo);
+    if (elemTest2.textContent.length > 0) {
+      sumTest += 1;
+    }
   }
-})
-
-// Récupérer l'ID du champ
-document
-  .getElementById("email")
-  .addEventListener("input", function(e) {
-// Définir les caractères autorisés
-  if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(e.target.value)) {
-    let el = document.getElementById("emailErrorMsg")
-    el.innerText = "";
+  // Si les conditions requises ne sont pas remplies, le bouton est désactivé et un message d'erreur s'affiche
+  if (sumTest > 0) {
+      document
+        .getElementById("order")
+        .setAttribute("disabled", true);
+      alert("veuillez corriger le formulaire")
   } else {
-    // Définir un message si le champ est laissé vide
-    if(/^$/.test(e.target.value)) {
-        let el = document.getElementById("emailErrorMsg")
-        el.innerText = "Doit être renseigné";
-      } else {
-        // Définir un message si le champ ne correspond pas au format demandé
-        let el = document.getElementById("emailErrorMsg")
-        el.innerText = "Veuillez entrer une adresse mail valide";
-      }
+    // Sinon, le formulaire peut être envoyé
+    document
+        .getElementById("order")
+        .removeAttribute("disabled");
+    alert("commande enregistrée!");
   }
-})
+}  
+
+
+
 
 /**************************************/
 //END BLOC 3
@@ -324,7 +308,10 @@ document
 
 
 
-function storeCust() {
+
+
+
+/*  
     let firstName = document.getElementById("firstName").value;
     let lastName = document.getElementById("lastName").value;
     let address = document.getElementById("address").value;
@@ -334,7 +321,8 @@ function storeCust() {
     let custData = [firstName, lastName, address, city, email];
     let custString = JSON.stringify(custData);
     localStorage.setItem("custData", custString);
-}
+*/
+
 
 
 /*
