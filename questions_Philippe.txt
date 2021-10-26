@@ -12,6 +12,7 @@ ________________________________________________________________________________
         - pour le sendData, why "click" et not "submit"???
         - vider le panier une fois la confirmation reçue?
         - Message d'erreur permanent dans le panier....
+        - confirmation.js ok?
 
 
 

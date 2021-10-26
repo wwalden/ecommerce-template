@@ -168,7 +168,7 @@ function updateTotal() {
 
 
 /**************************************/
-// BLOC 3: Valider les différents champs du formulaire avec des RegEx (en 2 parties)
+// BLOC 3: Valider les différents champs du formulaire avec des RegEx
 /**************************************/
 
 // Définir la fonction de validation Regex
@@ -180,8 +180,8 @@ function regexFunc(rId, rIdError, rRegex) {
     .addEventListener("input", function(e) {
   // Réactiver le bouton d'envoi de la commande (dans le cas où il aurait été désactivé par une tentative d'envoi non valide précédemment)
   document
-    .getElementById("order")
-    .removeAttribute("disabled");
+  .getElementById("order")
+  .removeAttribute("disabled");
   // Définir les caractères autorisés
   if (rRegex.test(e.target.value)) {
     let el = document.getElementById(rIdError)
@@ -227,10 +227,10 @@ regexFunc(rId[i], rIdError[i], rRegex[i]);
 // BLOC 4: Entrer les informations client dans le local storage
 /**************************************/
 
-/*
-// Fonction appelée au clic de commande
+
+// Fonction appelée au survol du bouton de commande
 // Le but est de désactiver le bouton si tous les champs ne sont pas correctement renseignés
-function storeCust() {
+function formCheck() {
   // Définir les variables de champs qui seront testés
   const rIdT = ["firstName", "lastName", "address", "city", "email"];
   const rIdErrorT = Array.from(rIdT, x => x + "ErrorMsg");
@@ -254,34 +254,36 @@ function storeCust() {
       document
         .getElementById("order")
         .setAttribute("disabled", true);
-      alert("veuillez corriger le formulaire")
   } else {
     // Sinon, le formulaire peut être envoyé
     document
-        .getElementById("order")
-        .removeAttribute("disabled");
-    alert("commande enregistrée!");
-    send(el);
+      .getElementById("order")
+      .removeAttribute("disabled");
   }
 }
-*/
 
 
+// Fonction appelée au clic du bouton de commande
+// Envoyer les informations de la commande (requête POST sur l'API), récupérer le numéro de commande
 function sendData(event) {
   event.preventDefault();
+  // Nommer les variables pour chacun des champs de formulaire
   let firstName = document.getElementById("firstName").value;
   let lastName = document.getElementById("lastName").value;
   let address = document.getElementById("address").value;
   let city = document.getElementById("city").value;
   let email = document.getElementById("email").value;
+  // Créer un Object avec les informations du client
   let custData = {"firstName": firstName,"lastName": lastName,"address": address,"city": city,"email": email};
+  // Créer un Array avec les ID des produits du panier
   let productData = [];
   Object.keys(myJson).forEach((theId) => {
     productData.push(theId)
   })
+  // Concaténer le tout dans un object, le mettre au format JSON
   let dataAll = {"contact": custData, "products": productData};
   let dataAllString = JSON.stringify(dataAll)
-  
+  // Requête POST sur l'API
   fetch("http://localhost:3000/api/products/order", {
     method: "POST",
     headers: {
@@ -295,19 +297,40 @@ function sendData(event) {
       return res.json();
     }
   })
+  // Récupérer la réponse, ouvrir une page 'confirmation' et insérer le numéro de commande dans l'URL
   .then(function(value) {
-    window.open(`./confirmation.html?order=${value.orderId}`)
+    window.open(`./confirmation.html?order=${value.orderId}`,"_self")
   });
 }
 
+
+// Event Listener qui lance la fonction 'sendData'
 document
   .getElementById("order")
   .addEventListener("click", sendData);
+
+// Event Listener qui lance la fonction 'formCheck'
+document
+  .getElementById("order")
+  .addEventListener("mouseover", formCheck, false);
 
 
 /**************************************/
 //END BLOC 4
 /**************************************/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
