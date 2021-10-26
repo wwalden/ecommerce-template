@@ -2,9 +2,16 @@ ________________________________________________________________________________
 // MERCREDI 27 OCTOBRE
 
 - PROJET P5:
-        - Quand doit-on appeler une fonction?
-
-
+        - Quand doit-on appeler une fonction? (return ou pas)
+        - dans le clic de la delete function, pourquoi uniquement des guillements simples?
+        - pourquoi      "console.log(Object.values(myJson)[2]);" afficher l'objet mais
+                        "alert(Object.values(myJson)[2]);" ne l'affiche pas?
+        - dans les critères d'éval, concernant le innerHTML on est ok?
+        - callback hell?
+        - souvent le for est pratique avec un i pour compter dans le Array non?
+        - pour le sendData, why "click" et not "submit"???
+        - vider le panier une fois la confirmation reçue?
+        - Message d'erreur permanent dans le panier....
 
 
 

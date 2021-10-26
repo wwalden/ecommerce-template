@@ -55,9 +55,9 @@ for (i=0; i<=count-1; i++) {
               </div>
           </div>`
       }         
-    }        
+    }
+    updateTotal();        
   })
-//  .then(updateTotal())
 }
 
 

@@ -1,14 +1,37 @@
+/*
+TO-DO:
+
+Loops: foreach ou for of?
+redécouper une ou deux fonctions
+voir pour la récupération de l'ID... variable direct dans le fetch? mettre l'ID sur le produit et se ballader dans l'HTML?
+
+*/
 
 /**************************************/
 // BLOC 1: Afficher dynamiquement les éléments du panier sur la page panier, produit par produit
 /**************************************/
 
-// Compter et récupérer les ID présents dans le panier
+
+
+// Compter le nombre d'ID présents dans le panier
 let myData = localStorage.getItem("carty");
 let myJson = JSON.parse(myData);
+let count = Object.keys(myJson).length;
 
-Object.keys(myJson).forEach( (myId) => {
-  // Pour chaque ID du panier, requêter l'API et s'assurer du retour des données
+//alert(Object.values(Object.values(myJson)[2]));
+//console.log(myJson.a557292fe5814ea2b15c6ef4bd73ed83.Pink);
+//delete myJson.a557292fe5814ea2b15c6ef4bd73ed83.Pink;
+//console.log(Object.values(myJson)[2]);
+//Reflect.deleteProperty(myJson.a557292fe5814ea2b15c6ef4bd73ed83, 'Pink');
+//alert(Object.keys(myJson).length);
+
+
+let myTotQty = 0;  
+let myTotPce = 0;
+
+for (i=0; i<=count-1; i++) {
+  let myId = Object.keys(myJson)[i];
+  // Requêter l'API et s'assurer du retour des données
   fetch("http://localhost:3000/api/products/" + myId)
   .then(function(res) {
     if (res.ok) {
@@ -16,55 +39,59 @@ Object.keys(myJson).forEach( (myId) => {
     }
   })
   .then(function(value) {
-    // Appel de la fonction qui affiche les éléments
-    return displayItems(value);
-  })
-  .then(function() {
-    // Appel de la fonction updateTotal, définie plus tard, pour mettre à jour les totaux du panier
-    return updateTotal();
-  })
-})
+    // Déterminer le nombre de couleurs disponibles pour l'ID, identifier chaque couleur [j]
+    // Vérifier à chaque fois si elle est présente dans le panier 
+    for (j=0; j<=value.colors.length;j++) {
+      let NewColor = value.colors[j];
 
+      // Si la couleur est dans le panier (quantité > 1), création de la structure HTML 
+      // En insérant les informations du produit / du panier
+      if (myJson[myId][NewColor] > 0) {
+          
+        let newArtBox = document.createElement("article");
+        newArtBox.setAttribute("class", "cart__item");
+        //newArtBox.setAttribute("id", value[i]._id + NewColor);
+        document.getElementById("cart__items").appendChild(newArtBox);
+        newArtBox.innerHTML = `
+          <div class="cart__item__img">
+              <img src="${value.imageUrl}" alt="${value.altTxt}">
+          </div>
+          <div class="cart__item__content">
+              <div class="cart__item__content__titlePrice">
+                  <h2>${value.name}</h2>
+                  <p>couleur: ${NewColor}</p>
+                  <p id="${NewColor}${value._id}${NewColor}">${value.price}€</p>
+                  
+              </div>
+              <div class="cart__item__content__settings">
+                  <div class="cart__item__content__settings__quantity">
+                      <p>Qté :</p>
+                      <input type="number" onchange="changeFunc(this)" id="${NewColor}${value._id}" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${myJson[myId][NewColor]}>
+                  </div>
+                  <div class="cart__item__content__settings__delete">
+                      <p onclick="deleteFunc('${value._id}', '${NewColor}')" class="deleteItem">Supprimer</p>
+                  </div>
+              </div>
+          </div>`
 
-// Fonction qui permet d'afficher toutes les informations de chaque élément du panier
-function displayItems(value) {
-  // Déterminer le nombre de couleurs disponibles pour l'ID, identifier chaque couleur [j]
-  // Vérifier à chaque fois si elle est présente dans le panier
-  let Arr = value.colors;
-  Arr.forEach((newColor) => {
-    // Si la couleur est dans le panier (quantité > 0), création de la structure HTML 
-    // En insérant les informations du produit / du panier
-    if (myJson[value._id][newColor] > 0) {
-      let newArtBox = document.createElement("article");
-      document.getElementById("cart__items").appendChild(newArtBox);
-      newArtBox.setAttribute("class", "cart__item");
-      // Si la couleur contient un "/", le supprimer
-      let colorUpdate = newColor.replace('/', '');
-      newArtBox.setAttribute("id", `${colorUpdate}${value._id}`);
-      newArtBox.innerHTML = `
-        <div class="cart__item__img">
-            <img src="${value.imageUrl}" alt="${value.altTxt}">
-        </div>
-        <div class="cart__item__content">
-            <div class="cart__item__content__titlePrice">
-                <h2>${value.name}</h2>
-                <p>couleur: ${newColor}</p>
-                <p class="price">${value.price}€</p>
-                
-            </div>
-            <div class="cart__item__content__settings">
-                <div class="cart__item__content__settings__quantity">
-                    <p>Qté :</p>
-                    <input type="number" onchange="changeFunc('${value._id}', '${newColor}')" class="itemQuantity" name="itemQuantity" min="1" max="100" value=${myJson[value._id][newColor]}>
-                </div>
-                <div class="cart__item__content__settings__delete">
-                    <p onclick="deleteFunc('${value._id}', '${newColor}')" class="deleteItem">Supprimer</p>
-                </div>
-            </div>
-        </div>`
-    }         
-  }) 
+          let countByRef = myJson[myId][NewColor];    // renvoie un Array avec la liste des quantités (une entrée par couleur) (pour Qty)
+          //let idToPick = NewColor + value._id + NewColor;               // permet de définir l'ID qui nous renverra le prix (pour prix)
+          //let idForPrice = document.getElementById(idToPick);         // récupère le prix (pour prix)
+          //let pcebyRef = parseInt(idForPrice.textContent.slice(0,-1));
+          let pcebyRef = value.price;
+          myTotQty += countByRef;                                     // Agrège les valeurs pour chaque ID du panier (pour Qty)
+          myTotPce += pcebyRef * countByRef
+      }         
+    } 
+
+    
+    let totalQtyEl = document.getElementById("totalQuantity");    // Afficher la quantité
+    totalQtyEl.innerHTML = myTotQty;
+    let totalPceEl = document.getElementById("totalPrice");       // Afficher le prix
+    totalPceEl.innerHTML = myTotPce; 
+  })
 }
+
 
 
 /**************************************/
@@ -74,53 +101,46 @@ function displayItems(value) {
 
 
 
+
 /**************************************/
-// BLOC 2: Fonctions pour gérer les quantités du panier (Modifier, Supprimer...)
+// BLOC 2: Gérer les quantités du panier (Modifier, Supprimer...)
 /**************************************/
 
 // Vider le panier. La fonction se lance au clic sur le bouton "vider le panier"
-
-const emptyCartEl = document.getElementById('emptyCart');
-emptyCartEl.addEventListener('click', function() {       
+function emptyFunc() {
   let answer = window.confirm("Confirmez-vous la suppression du panier?");
     if (answer) {
       localStorage.removeItem("carty");
       alert("votre panier est vide!");
       location.reload();
+      return false;
     }
-});
+    else {
+    }
+}
 
 
 // Supprimer un article. L'élément concerné se supprime du panier et du localstorage au clic
 // La fonction se lance au clic (clic du code HTML défini par la fonction d'affichage ci-dessus)
-function deleteFunc(delId, delCol) {
-  // Aller dans le localStorage, récupérer le JSON pour mettre la quantité à 0
+function deleteFunc(modifId, modifCol) {
   let myData = localStorage.getItem("carty");
   let myJson = JSON.parse(myData);
-  // S'il y a plusieurs couleurs pour la même référence, on ne supprime que la couleur concernée
-  if (Object.keys(myJson[delId]).length == 1) {
-    delete myJson[delId];
-  } else if (Object.keys(myJson[delId]).length > 1) {
-    delete myJson[delId][delCol];
-  }
-  // Stocker à nouveau le JSON modifié
+  myJson[modifId][modifCol] = 0;
   let myNewData = JSON.stringify(myJson);
   localStorage.setItem("carty", myNewData);
-  // Envoyer un message de confirmation et reloader la page
   alert("Élément supprimé!");
   location.reload();
+  //return false;
 }
 
 
-// Modifier la quantité pour un article. L'élément concerné est mis à jour dans le panier + le localstorage
+// Modifier la quantité pour un article. L'élément concerné est mis à jour dans le panier et le localstorage au clic
 // La fonction se lance au clic (clic du code HTML défini par la fonction d'affichage ci-dessus)
-function changeFunc(modifId, modifCol) {
+function changeFunc(inp) {
   // Récupérer l'ID et la couleur de l'élément concerné
-  // Si la couleur contient un "/", le supprimer
-  let modifColUpdate = modifCol.replace('/', '');
-  let getQty = document.querySelector(`#${modifColUpdate}${modifId} input`);
-  let modifQty = parseInt(getQty.value);
-  //let modifQty = parseInt(document.getElementById(`${modifId}|${modifCol}`).value )
+  let modifCol = inp.id.slice(0,-32);
+  let modifId = inp.id.slice(-32);
+  let modifQty = parseInt(inp.value);
   // Aller dans le localStorage, récupérer le JSON pour mettre à jour la quantité
   let myData = localStorage.getItem("carty");
   let myJson = JSON.parse(myData);
@@ -128,7 +148,7 @@ function changeFunc(modifId, modifCol) {
   // Stocker à nouveau le JSON modifié
   let myNewData = JSON.stringify(myJson);
   localStorage.setItem("carty", myNewData);
-  // Appel de la fonction updateTotal, définie plus tard, pour mettre à jour les totaux du panier
+
   updateTotal();
 }
 
@@ -138,31 +158,36 @@ function updateTotal() {
   // Aller dans le localStorage, récupérer le JSON 
   let myData = localStorage.getItem("carty");
   let myJson = JSON.parse(myData);
+  // Afficher EN TEMPS RÉEL les totaux quantités et prix du panier
+  let count = Object.keys(myJson).length;
   var myTotQty = 0;
   var myTotPce = 0;
-  Object.keys(myJson).forEach((theId) => {
-    // Récupérer les quantités pour chaque référence
-    let countByRef = Object.values(myJson[theId]).reduce((a, b) => a + b, 0);
-    // Récupérer la première couleur demandée dans la référence (sert à récupérer ensuite le prix)
-    let colorRaw = Object.keys(myJson[theId])[0];
-    // Si la couleur contient un "/", le supprimer
-    let myIddCol = colorRaw.replace('/', '');
-    let idForPrice = document.querySelector(`#${myIddCol}${theId} p.price`);
+  // Boucle pour récupérer la quantité totale et le prix pour chacune des références
+  for (i=0;i<=count-1;i++) {
+    let reference = Object.values(Object.values(myJson)[i]);    // renvoie un Array avec la liste des quantités (une entrée par couleur) (pour Qty)
+    let myIdd = Object.keys(myJson)[i];                         // trouve l'ID (pour prix)
+    let myIddCol = Object.keys(Object.values(myJson)[i])[0];    // couleur pour l'ID (pour prix)
+    let idToPick = myIddCol + myIdd + myIddCol;                 // permet de définir l'ID qui nous renverra le prix (pour prix)
+    let idForPrice = document.getElementById(idToPick);         // récupère le prix (pour prix)
     let pcebyRef = parseInt(idForPrice.textContent.slice(0,-1));
-    myTotQty += countByRef;                               
-    myTotPce += pcebyRef * countByRef;
-  })
-  // Implémenter les résultats dans le corps HTML
-  let totalQtyEl = document.getElementById("totalQuantity");
+    let countByRef = reference.reduce((a, b) => a + b, 0);      // fait la somme du Array (pour Qty)
+    myTotQty += countByRef;                                     // Agrège les valeurs pour chaque ID du panier (pour Qty)
+    myTotPce += pcebyRef * countByRef                           // donne le prix pour chaque ID du panier (pour Qty)       
+  }
+  let totalQtyEl = document.getElementById("totalQuantity");    // Afficher la quantité
   totalQtyEl.innerHTML = myTotQty;
-  let totalPceEl = document.getElementById("totalPrice");  
-  totalPceEl.innerHTML = myTotPce;
+  let totalPceEl = document.getElementById("totalPrice");       // Afficher le prix
+  totalPceEl.innerHTML = myTotPce; 
 }
+  
 
 
 /**************************************/
 //END BLOC 2
 /**************************************/
+
+
+
 
 
 
@@ -211,29 +236,22 @@ const rIdError = Array.from(rId, x => x + "ErrorMsg");
 const rRegex = [regex1, regex1, regex2, regex1, regex3];
 
 // Boucle "for" sur la fonction, afin de l'appliquer à chacun des champs de formulaire
-for (i=0;i<rId.length;i++) {
+for (i=0;i<5;i++) {
 regexFunc(rId[i], rIdError[i], rRegex[i]);
 }
   
-
-/**************************************/
-//END BLOC 3
+  
 /**************************************/
 
 
-
-
-/**************************************/
-// BLOC 4: Entrer les informations client dans le local storage
-/**************************************/
-
-/*
 // Fonction appelée au clic de commande
 // Le but est de désactiver le bouton si tous les champs ne sont pas correctement renseignés
 function storeCust() {
+
   // Définir les variables de champs qui seront testés
   const rIdT = ["firstName", "lastName", "address", "city", "email"];
-  const rIdErrorT = Array.from(rIdT, x => x + "ErrorMsg");
+  const rIdErrorT = Array.from(rId, x => x + "ErrorMsg");  
+
   // Boucle qui renvoie un entier supérieur à zéro si l'un des champs est vide (== bloquant)
   let sumTest = 0
   for (let testOne of rIdT) {
@@ -261,55 +279,43 @@ function storeCust() {
         .getElementById("order")
         .removeAttribute("disabled");
     alert("commande enregistrée!");
-    send(el);
   }
+}  
+
+/**************************************/
+//END BLOC 3
+/**************************************/
+
+
+
+
+
+/**************************************/
+// BLOC 4: Entrer les informations client dans le local storage
+/**************************************/
+/*
+
+function storeCust() {
+    let firstName = document.getElementById("firstName").value;
+    let lastName = document.getElementById("lastName").value;
+    let address = document.getElementById("address").value;
+    let city = document.getElementById("city").value;
+    let email = document.getElementById("email").value;
+
+    let custData = [firstName, lastName, address, city, email];
+    let custString = JSON.stringify(custData);
+    localStorage.setItem("custData", custString);
 }
+
+
+let mybla = localStorage.getItem("custData");
+let mybli = JSON.parse(mybla);
+console.log(mybli);
 */
-
-
-function sendData(event) {
-  event.preventDefault();
-  let firstName = document.getElementById("firstName").value;
-  let lastName = document.getElementById("lastName").value;
-  let address = document.getElementById("address").value;
-  let city = document.getElementById("city").value;
-  let email = document.getElementById("email").value;
-  let custData = {"firstName": firstName,"lastName": lastName,"address": address,"city": city,"email": email};
-  let productData = [];
-  Object.keys(myJson).forEach((theId) => {
-    productData.push(theId)
-  })
-  let dataAll = {"contact": custData, "products": productData};
-  let dataAllString = JSON.stringify(dataAll)
-  
-  fetch("http://localhost:3000/api/products/order", {
-    method: "POST",
-    headers: {
-      'Accept': 'application/json', 
-      'Content-Type': 'application/json'
-    },
-    body: dataAllString
-  })
-  .then(function(res) {
-    if (res.ok) {
-      return res.json();
-    }
-  })
-  .then(function(value) {
-    window.open(`./confirmation.html?order=${value.orderId}`)
-  });
-}
-
-document
-  .getElementById("order")
-  .addEventListener("click", sendData);
-
 
 /**************************************/
 //END BLOC 4
 /**************************************/
-
-
 
 
 
