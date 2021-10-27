@@ -12,7 +12,17 @@ ________________________________________________________________________________
         - pour le sendData, why "click" et not "submit"???
         - vider le panier une fois la confirmation reçue?
         - Message d'erreur permanent dans le panier....
-        - confirmation.js ok?
+        - ajout d'un fichier confirmation.js ok?
+        - histoire de la double confirmation pour l'envoi du POST?? double-check...
+        - tester input direct pour les quantités        
+
+
+
+explanation?
+        var n =  123456789;
+        var myArr = (""+n).split("");
+        1,2,3,4,5,6,7,8,9
+
 
 
 

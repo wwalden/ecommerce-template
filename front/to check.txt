@@ -1,0 +1,2 @@
+Données validés par 2 fois dans le POST?
+vérifier la liste des specs pour le plan de test
