@@ -1,4 +1,3 @@
-
 /**************************************/
 // BLOC 1: Afficher dynamiquement les éléments du panier sur la page panier, produit par produit
 /**************************************/
@@ -28,12 +27,10 @@ if (myJson !== null) {
 
 // Fonction qui permet d'afficher toutes les informations de chaque élément du panier
 function displayItems(value) {
-  // Déterminer le nombre de couleurs disponibles pour l'ID, identifier chaque couleur [j]
-  // Vérifier à chaque fois si elle est présente dans le panier
+  // Déterminer les couleurs dispo pour l'ID, les identifier [j], vérifier leur présence dans le panier
   let Arr = value.colors;
   Arr.forEach((newColor) => {
-    // Si la couleur est dans le panier (quantité > 0), création de la structure HTML 
-    // En insérant les informations du produit / du panier
+    // Si la couleur est dans le panier (quantité > 0), création de la structure HTML avec les infos produit
     if (myJson[value._id][newColor] > 0) {
       let newArtBox = document.createElement("article");
       document.getElementById("cart__items").appendChild(newArtBox);
@@ -112,11 +109,9 @@ function deleteFunc(delId, delCol) {
 // Modifier la quantité pour un article. L'élément concerné est mis à jour dans le panier + le localstorage
 function changeFunc(modifId, modifCol) {
   // Récupérer l'ID et la couleur de l'élément concerné
-  // Si la couleur contient un "/", le supprimer
   let modifColUpdate = modifCol.replace('/', '');
   let getQty = document.querySelector(`#${modifColUpdate}${modifId} input`);
   let modifQty = parseInt(getQty.value);
-  //let modifQty = parseInt(document.getElementById(`${modifId}|${modifCol}`).value )
   // Aller dans le localStorage, récupérer le JSON pour mettre à jour la quantité
   let myData = localStorage.getItem("carty");
   let myJson = JSON.parse(myData);
@@ -124,7 +119,7 @@ function changeFunc(modifId, modifCol) {
   // Stocker à nouveau le JSON modifié
   let myNewData = JSON.stringify(myJson);
   localStorage.setItem("carty", myNewData);
-  // Appel de la fonction updateTotal, définie plus tard, pour mettre à jour les totaux du panier
+  // Appeler de la fonction updateTotal pour mettre à jour les totaux du panier
   updateTotal();
 }
 
@@ -199,10 +194,9 @@ function regexFunc(arrId, arrIdError, arrRegex) {
   document
     .getElementById(arrId)
     .addEventListener("input", function(e) {
-    // Réactiver le bouton d'envoi de la commande (dans le cas où il aurait été désactivé par une tentative d'envoi non valide précédemment)
-    document
-      .getElementById("order")
-      .removeAttribute("disabled");
+  document
+    .getElementById("order")
+    .removeAttribute("disabled");
   // Définir les caractères autorisés
     if (arrRegex.test(e.target.value)) {
       let el = document.getElementById(arrIdError)
@@ -303,60 +297,3 @@ document
 /**************************************/
 //END BLOC 4
 /**************************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//***********************************************************************//
-                    // DATA USE KIT //
-//***********************************************************************//
-
-/*
-// JSON
-let myData = localStorage.getItem("carty");
-let myJson = JSON.parse(myData);
-let count = Object.keys(myJson).length;
-let myId = Object.keys(myJson)[2];
-alert (myId);
-*/
-
-/*
-// LOCAL STORAGE
-localStorage.clear();
-alert(localStorage.length);
-let myData = localStorage.getItem("carty");
-alert(myData);
-*/
-
-/*
-// TO GET A SPECIFIC KEY
-// FORMAT : {"107fb5b75607497b96722bda5b504926":{"Blue":1,"White":2}}
-let myData = localStorage.getItem("carty");
-let myJson = JSON.parse(myData);
-let count = Object.keys(myJson).length; // DONNE LE NOMBRE D'ID DANS LE JSON
-let myId = Object.keys(myJson);  // DONNE L'ID SEULEMENT S'IL N'Y EN A QU'UNE
-let myId = Object.keys(myJson)[0]; // DONNE LA PREMIERE ID STOCKÉE
-let myQtyByColor = myJson[myId]["Red"];  // DONNE LA QUANTITÉ DE RED
-
-Object.keys(Object.values(myJson)[0])[0]; // POUR ALLER PLUS LOIN DANS LE JSON
-*/
-
-//***********************************************************************//

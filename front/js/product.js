@@ -86,10 +86,3 @@ testCol = document.getElementById("quantity");
   } else {alert("c'est ajouté au panier!")
   }
 }
-
-
-
-//localStorage.clear();
-//alert(localStorage.length);
-//let myData = localStorage.getItem("carty");
-//alert(myData);
