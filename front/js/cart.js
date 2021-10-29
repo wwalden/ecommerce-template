@@ -7,10 +7,9 @@
 let myData = localStorage.getItem("carty");
 let myJson = JSON.parse(myData);
 
-
 if (myJson !== null) {
+  // Pour chaque ID du panier, requêter l'API et s'assurer du retour des données
   Object.keys(myJson).forEach( (myId) => {
-    // Pour chaque ID du panier, requêter l'API et s'assurer du retour des données
     fetch("http://localhost:3000/api/products/" + myId)
     .then(function(res) {
       if (res.ok) {
@@ -18,8 +17,9 @@ if (myJson !== null) {
       }
     })
     .then(function(value) {
-      // Appel de la fonction qui affiche les éléments
+      // Appeler la fonction qui affiche les éléments
       displayItems(value);
+      // Appeler la fonction de mise à jour des totaux
       updateTotal();
     })
   })
@@ -89,8 +89,7 @@ emptyCartEl.addEventListener('click', function() {
 });
 
 
-// Supprimer un article. L'élément concerné se supprime du panier et du localstorage au clic
-// La fonction se lance au clic (clic du code HTML défini par la fonction d'affichage ci-dessus)
+// Supprimer un article. L'élément concerné se supprime du panier et du localstorage
 function deleteFunc(delId, delCol) {
   // Aller dans le localStorage, récupérer le JSON pour mettre la quantité à 0
   let myData = localStorage.getItem("carty");
@@ -111,7 +110,6 @@ function deleteFunc(delId, delCol) {
 
 
 // Modifier la quantité pour un article. L'élément concerné est mis à jour dans le panier + le localstorage
-// La fonction se lance au clic (clic du code HTML défini par la fonction d'affichage ci-dessus)
 function changeFunc(modifId, modifCol) {
   // Récupérer l'ID et la couleur de l'élément concerné
   // Si la couleur contient un "/", le supprimer
@@ -141,13 +139,15 @@ function updateTotal() {
   Object.keys(myJson).forEach((theId) => {
     // Récupérer les quantités pour chaque référence
     let countByRef = Object.values(myJson[theId]).reduce((a, b) => a + b, 0);
-    // Récupérer la première couleur demandée dans la référence (sert à récupérer ensuite le prix)
+    // Récupérer la première couleur demandée dans la référence
     let colorRaw = Object.keys(myJson[theId])[0];
     // Si la couleur contient un "/", le supprimer
     let myIddCol = colorRaw.replace('/', '');
+    // Récupérer les prix dans le code HTML grace à l'ID
     let idForPrice = document.querySelector(`#${myIddCol}${theId} p.price`);
     if (idForPrice !== null) {
       let pcebyRef = parseInt(idForPrice.textContent.slice(0,-1));
+      // Mettre à jour les totaux
       myTotQty += countByRef;                               
       myTotPce += pcebyRef * countByRef;
     }
@@ -167,7 +167,7 @@ function updateTotal() {
 
 
 /**************************************/
-// BLOC 3: Valider les différents champs du formulaire avec des RegEx
+// BLOC 3: Valider lors de la saisie les différents champs du formulaire avec des RegEx 
 /**************************************/
 
 // Définir les différentes règles Regex //
@@ -180,34 +180,36 @@ let regex3 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
 
 // Stocker les différentes variables (5 champs de formulaire) pour la fonction. (dans des Arrays)
-const rId = ["firstName", "lastName", "address", "city", "email"];
-const rIdError = Array.from(rId, x => x + "ErrorMsg");
-const rRegex = [regex1, regex1, regex2, regex1, regex3];
+// Array avec les ID des champs de formulaires
+const arrId = ["firstName", "lastName", "address", "city", "email"];
+// Array avec les ID des espaces définis pour afficher les messages d'erreurs
+const arrIdError = Array.from(arrId, x => x + "ErrorMsg");
+// Array contenant les différentes Regex définies
+const arrRegex = [regex1, regex1, regex2, regex1, regex3];
 
 // Boucle "for" sur la fonction, afin de l'appliquer à chacun des champs de formulaire
-for (i=0;i<rId.length;i++) {
-regexFunc(rId[i], rIdError[i], rRegex[i]);
+for (i=0;i<arrId.length;i++) {
+regexFunc(arrId[i], arrIdError[i], arrRegex[i]);
 }
 
 
 // Définir la fonction de validation Regex
-// rId: ID de l'élément à tester, rIdError: ID de l'élément qui affiche le message d'erreur, rRegex: règle à appliquer
 // La fonction sera appelée pour chacun des 5 champs du formulaire
-function regexFunc(rId, rIdError, rRegex) {
+function regexFunc(arrId, arrIdError, arrRegex) {
   document
-    .getElementById(rId)
+    .getElementById(arrId)
     .addEventListener("input", function(e) {
     // Réactiver le bouton d'envoi de la commande (dans le cas où il aurait été désactivé par une tentative d'envoi non valide précédemment)
     document
       .getElementById("order")
       .removeAttribute("disabled");
   // Définir les caractères autorisés
-    if (rRegex.test(e.target.value)) {
-      let el = document.getElementById(rIdError)
+    if (arrRegex.test(e.target.value)) {
+      let el = document.getElementById(arrIdError)
       el.innerText = "";
     } else {
         // Définir un message si le champ ne correspond pas au format demandé
-        let el = document.getElementById(rIdError)
+        let el = document.getElementById(arrIdError)
         el.innerText = "Format non valide";
     }
   })
@@ -225,8 +227,8 @@ function regexFunc(rId, rIdError, rRegex) {
 /**************************************/
 
 // Fonction appelée au clic du bouton de commande
-// Envoyer les informations de la commande (requête POST sur l'API), récupérer le numéro de commande
-function sendData(event) {
+// Permet de récupérer les données du formulaire et de créer l'objet qui sera envoyé via l'API
+function getData(event) {
   event.preventDefault();
   // Nommer les variables pour chacun des champs de formulaire
   let firstName = document.getElementById("firstName").value;
@@ -234,49 +236,69 @@ function sendData(event) {
   let address = document.getElementById("address").value;
   let city = document.getElementById("city").value;
   let email = document.getElementById("email").value;
-  let v1 = regex1.test(firstName);
-  let v2 = regex1.test(lastName);
-  let v3 = regex2.test(address);
-  let v4 = regex1.test(city);
-  let v5 = regex3.test(email);
-  if (v1 && v2 && v3 && v4 && v5) {
+  // S'assurer que TOUS les champs respectent les Regex
+  if (formCheck(firstName, lastName, address, city, email) == true) {
     // Créer un Object avec les informations du client
     let custData = {"firstName": firstName,"lastName": lastName,"address": address,"city": city,"email": email};
     // Créer un Array avec les ID des produits du panier
     let productData = [];
-    Object.keys(myJson).forEach((theId) => {
-      productData.push(theId)
+    Object.keys(myJson).forEach((cartId) => {
+      productData.push(cartId)
     })
     // Concaténer le tout dans un object, le mettre au format JSON
     let dataAll = {"contact": custData, "products": productData};
     let dataAllString = JSON.stringify(dataAll)
-    // Requête POST sur l'API
-    fetch("http://localhost:3000/api/products/order", {
-      method: "POST",
-      headers: {
-        'Accept': 'application/json', 
-        'Content-Type': 'application/json'
-      },
-      body: dataAllString
-    })
-    .then(function(res) {
-      if (res.ok) {
-        return res.json();
-      }
-    })
-    // Récupérer la réponse, ouvrir une page 'confirmation' et insérer le numéro de commande dans l'URL
-    .then(function(value) {
-      window.open(`./confirmation.html?order=${value.orderId}`,"_self")
-    });
+    // Appeler la fonction d'envoi des données
+    sendData(dataAllString)
   } else {
     alert("Veuillez vérifier le formulaire!")
   }
 }
 
-// Event Listener qui lance la fonction 'regCheckFunc' puis 'sendData'
+
+// Vérifier au moment de la soumission du formulaire que l'ensemble des input sont conformes aux attentes
+function formCheck(firstName, lastName, address, city, email) {
+  // S'assurer que TOUS les champs respectent les Regex
+  let v1 = regex1.test(firstName);
+  let v2 = regex1.test(lastName);
+  let v3 = regex2.test(address);
+  let v4 = regex1.test(city);
+  let v5 = regex3.test(email);
+  if(v1 && v2 && v3 && v4 && v5) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+// Envoyer les informations de la commande (requête POST sur l'API), récupérer le numéro de commande
+function sendData(dataAllString) {
+  // Requête POST sur l'API
+  fetch("http://localhost:3000/api/products/order", {
+    method: "POST",
+    headers: {
+      'Accept': 'application/json', 
+      'Content-Type': 'application/json'
+    },
+    body: dataAllString
+  })
+  .then(function(res) {
+    if (res.ok) {
+      return res.json();
+    }
+  })
+  // Récupérer la réponse, ouvrir une page 'confirmation' et insérer le numéro de commande dans l'URL
+  .then(function(value) {
+    window.open(`./confirmation.html?order=${value.orderId}`,"_self")
+  });
+}
+
+
+// Event Listener qui lance les fonctions 'getData' puis 'sendData'
 document
   .getElementById("order__form")
-  .addEventListener("submit", sendData);
+  .addEventListener("submit", getData);
 
 /**************************************/
 //END BLOC 4
