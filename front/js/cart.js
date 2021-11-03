@@ -167,9 +167,9 @@ function updateTotal() {
 
 // Définir les différentes règles Regex //
 // Lettres, accents et tirets autorisés
-let regex1 = /^[A-zÀ-ÿ-_ ]+$/;
+let regex1 = /^[A-zÀ-ÿ-_' ]+$/;
 // Lettres, accents, tirets, points et virgules autorisés
-let regex2 = /^[A-zÀ-ÿ0-9-/_,. ]+$/;
+let regex2 = /^[A-zÀ-ÿ0-9-/_,'. ]+$/;
 // Format adresse mail uniquement autorisé
 let regex3 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
